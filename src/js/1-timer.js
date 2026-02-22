@@ -3,16 +3,18 @@ import 'flatpickr/dist/flatpickr.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-// 1. Знаходимо всі необхідні елементи інтерфейсу
 const input = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('button[data-start]');
 const daysVal = document.querySelector('[data-days]');
 const hoursVal = document.querySelector('[data-hours]');
 const minutesVal = document.querySelector('[data-minutes]');
 const secondsVal = document.querySelector('[data-seconds]');
+
 let userSelectedDate = null;
 let timerId = null;
+
 startBtn.disabled = true;
+
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -22,7 +24,8 @@ const options = {
     const selectedDate = selectedDates[0];
     const now = new Date();
 
-    if (selectedDate < now) {
+    if (selectedDate <= now) {
+      //
       iziToast.error({
         title: 'Error',
         message: 'Please choose a date in the future',
@@ -37,6 +40,7 @@ const options = {
 };
 
 flatpickr(input, options);
+
 startBtn.addEventListener('click', () => {
   startBtn.disabled = true;
   input.disabled = true;
@@ -44,12 +48,14 @@ startBtn.addEventListener('click', () => {
   timerId = setInterval(() => {
     const currentTime = new Date();
     const diff = userSelectedDate - currentTime;
+
     if (diff <= 0) {
       clearInterval(timerId);
       updateTimerInterface(0, 0, 0, 0);
       input.disabled = false;
       return;
     }
+
     const time = convertMs(diff);
     updateTimerInterface(time.days, time.hours, time.minutes, time.seconds);
   }, 1000);
@@ -65,7 +71,9 @@ function updateTimerInterface(days, hours, minutes, seconds) {
   minutesVal.textContent = addLeadingZero(minutes);
   secondsVal.textContent = addLeadingZero(seconds);
 }
+
 function convertMs(ms) {
+  //
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
